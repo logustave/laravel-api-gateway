@@ -185,6 +185,7 @@ return [
         /*
          * Package Service Providers...
          */
+        App\Providers\PassportServiceProvider::class,
 
         /*
          * Application Service Providers...
