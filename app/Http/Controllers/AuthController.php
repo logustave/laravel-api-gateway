@@ -34,7 +34,7 @@ class AuthController extends AccessTokenController
      *       ),
      * )
      */
-    public function auth(ServerRequestInterface $request): Collection
+    public function signin(ServerRequestInterface $request): Collection
     {
         $request_body = $request->getParsedBody();
         $request = $request->withParsedBody([

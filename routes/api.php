@@ -16,5 +16,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('auth')->group(function () {
-    Route::post('/signin', [AuthController::class,'auth'])->name('login.api');
+    Route::post('/signin', [AuthController::class,'signin'])->name('signin.api');
+    Route::post('/register', [AuthController::class,'register'])->name('register.api');
+    Route::post('/refresh', [AuthController::class,'refresh'])->name('refresh.api');
+    Route::post('/revoke', [AuthController::class,'revoke'])->name('revoke.api');
+    Route::post('/logout', [AuthController::class,'logout'])->name('logout.api');
 });
