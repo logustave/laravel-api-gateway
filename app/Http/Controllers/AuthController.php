@@ -2,18 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use JsonException;
+use Laravel\Passport\Http\Controllers\AccessTokenController;
 use OpenApi\Annotations as OA;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class AuthController extends BaseController
+class AuthController extends AccessTokenController
 {
     /**
      * @OA\Post(
-     * path="/auth/signin",
+     * path="/oauth/signin",
      * operationId="signin",
      * tags={"Auth"},
      * summary="Authentification",
@@ -30,38 +34,22 @@ class AuthController extends BaseController
      *       ),
      * )
      */
-    public function passportUserSignin(Request $request): JsonResponse|bool
+    public function auth(ServerRequestInterface $request): Collection
     {
-        try {
-            $dto = $this->validateBody(
-                $request,[
-                    'username' => 'required',
-                    'password' => 'required'
-                ]
-            );
-            if ($dto !== true){
-                return $dto;
-            }
-            $username = $request->input('username');
-            $password = $request->input('password');
+        $request_body = $request->getParsedBody();
+        $request = $request->withParsedBody([
+            "client_id" => env('PASSPORT_CLIENT_ID'),
+            "client_secret" => env('PASSPORT_CLIENT_SECRET'),
+            "scope" => env('PASSPORT_SCOPE'),
+            "grant_type" => env('PASSPORT_GRANT_TYPE'),
+            "username" => $request_body["username"],
+            "password" => $request_body["password"],
 
-            $auth = Http::post(env('APP_URL')."/oauth/token", [
-                'client_id' => env('PASSPORT_CLIENT_ID'),
-                'grant_type' => 'password',
-                'client_secret' => env('PASSPORT_CLIENT_SECRET'),
-                'scope' => '',
-                'username' => $username,
-                'password' => $password
-            ]);
-            $conversion = $this->convertJson($auth->body());
-            if ($auth->failed()){
-                $response = $this->sendError($conversion);
-            }else{
-                $response = $this->sendResponse($conversion,'success');
-            }
-            return $response;
-        }catch (HttpException $e){
-            return $this->sendError($e);
-        }
+        ]);
+        $tokenResponse = parent::issueToken($request);
+        $token = $tokenResponse->getContent();
+        $tokenInfo = json_decode($token, true);
+
+        return collect($tokenInfo);
     }
 }

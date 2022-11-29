@@ -16,5 +16,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('auth')->group(function () {
-    Route::post('/signin', [AuthController::class,'passportUserSignin'])->name('login.api');
+    Route::post('/signin', [AuthController::class,'auth'])->name('login.api');
 });
