@@ -8,18 +8,18 @@
         },
         "license": {
             "name": "WEBSERVICES",
-            "url": "http://localhost:8000/api/"
+            "url": "http://127.0.0.1:8000/api/"
         },
         "version": "1.0.0"
     },
     "servers": [
         {
-            "url": "http://localhost:8000/api/",
+            "url": "http://127.0.0.1:8000/api/",
             "description": "TCHIN-TCHIN Service Server"
         }
     ],
     "paths": {
-        "/auth/signin": {
+        "/oauth/signin": {
             "post": {
                 "tags": [
                     "Auth"
